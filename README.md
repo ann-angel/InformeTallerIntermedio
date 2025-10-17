@@ -30,5 +30,5 @@ Se trabaja con un conjunto de datos que contiene **registros de producción y us
 ## Estructura del repositorio
 
 - Datos: manufactura.chile.xlsx
-- Script: Informe.Rmd, Informe.html, README.md
+- Script: Informe.Rmd, Informe.html, Informe.pdf, README.md
 
