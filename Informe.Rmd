@@ -12,10 +12,10 @@ library(readxl)
 library(tidyverse)
 
 # cargar los datos
-mp <- read_excel("para.figuras.OE1.desem-manufactura.xlsx", 
+mp <- read_excel("manufactura.chile.xlsx", 
                  sheet = "mp_clase")
 
-produccion <- read_excel("para.figuras.OE1.desem-manufactura.xlsx", 
+produccion <- read_excel("manufactura.chile.xlsx", 
                          sheet = "produccion_clase")
 
 # mp, filtrar por años, crear nuevas variables
