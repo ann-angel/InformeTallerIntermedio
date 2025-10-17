@@ -1,8 +1,11 @@
 ---
-title: "InformeOHWe"
-author: "A.Araya"
+title: "Informe para Ocean Hack Week"
+author: "Andrea A.Araya"
 date: "2025-10-17"
-output: html_document
+output: 
+  bookdown::pdf_document2:
+    toc: false
+    fig_caption: yes
 ---
 
 ```{r setup, include=FALSE}
@@ -10,6 +13,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 library(readxl)
 library(tidyverse)
+library(ggplot2)
+library(dplyr)
+library(bookdown)
 
 # cargar los datos
 mp <- read_excel("manufactura.chile.xlsx", 
@@ -19,26 +25,37 @@ produccion <- read_excel("manufactura.chile.xlsx",
                          sheet = "produccion_clase")
 
 # mp, filtrar por años, crear nuevas variables
-mp <- mp %>% filter(ANIO > 2018) %>% 
+mp <- mp %>%  filter(ANIO > 2014) %>% 
   mutate(Millones = round((Toneladas/1000000),2),
          Porcentaje = round((Porcentaje*100),0))
 
 # mp, asignar factores, orden
 mp$ANIO <- factor(mp$ANIO, 
-                      levels = c(2019, 2020, 2021, 2022, 2023, 2024))
+                      levels = c(2015, 2016, 2017, 2018, 2019,
+                                 2020, 2021, 2022, 2023, 2024))
 mp$CLASE <- factor(mp$CLASE, 
                        levels = c("Derivados de algas", "Consumo animal", "Consumo humano"))
+
+# producción, filtrar por años, crear nuevas variables
+produccion <- produccion %>% filter(ANIO > 2014) %>% 
+  mutate(Millones = round((Toneladas/1000000),2),
+         Porcentaje = round((Porcentaje*100),0))
+
+# producción, asignar factores, orden
+produccion$ANIO <- factor(produccion$ANIO, 
+                  levels = c(2015, 2016, 2017, 2018, 2019,
+                                 2020, 2021, 2022, 2023, 2024))
+produccion$CLASE <- factor(produccion$CLASE, 
+                   levels = c("Derivados de algas", "Consumo animal", "Consumo humano"))
 
 ```
 
 ## REPORTE INDUSTRIA MANUFACTURERA
 
-Materia prima y producción.
+En el volumen total de materia prima, se observa una caída en 2016, seguida de un aumento sostenido hasta 2018, con cierta estabilidad en los años posteriores. Cada barra apilada refleja un año y está dividida en tres componentes según los productos elaborados: consumo humano, consumo animal y derivados de algas. El destino de consumo ha sido el más utilizado a lo largo del tiempo, creciendo del 51% en 2015 al 56% en 2024. Por otro lado, consumo animal ha disminuido gradualmente, bajando del 38% al 33% en el mismo periodo, mientras que el componente de los derivados de algas se ha mantenido relativamente estable, oscilando entre el 9% y el 12%.
 
-Entre 2020 y 2022, el uso de materia prima en la industria manufacturera aumentó un 13%, pero presentó una contracción en los últimos dos años. Por su parte, la producción total mostró una tendencia positiva, con un incremento del 16% en el periodo analizado. Al desagregar por subdivisión (Tabla 2), se observan diferencias relevantes. En consumo humano, la más significativa en términos de volumen, el uso de materia prima creció un 14% y la producción un 18%. En la subdivisión de consumo animal, que define la tendencia global, el uso de materia prima aumentó hasta 2022, pero luego disminuyó, cerrando 2024 con 1,27 millones de toneladas. Su producción siguió una evolución similar, cayendo desde un máximo 337 mil toneladas en 2022 a 296 mil toneladas en 2024. Por último, la subdivisión de derivados de algas se mantuvo estable a lo largo del periodo de análisis, con un promedio anual cercano a 386 mil toneladas de materia prima y 92 mil toneladas de producción.
+```{r, fig.cap="Evolución de la materia prima en la industria manufacturera. 2005-2024", echo=FALSE}
 
-
-```{r pressure, echo=FALSE}
 ggplot(mp, aes(x = ANIO, y = Millones, label = Millones))+
   geom_bar(aes(fill=CLASE), stat='identity', width = 0.7)+
   geom_text(aes(y=Acum_II,label = paste0(Porcentaje,"%"), fontface = "bold"),
@@ -55,7 +72,53 @@ ggplot(mp, aes(x = ANIO, y = Millones, label = Millones))+
         legend.title=element_blank(),
         axis.text.x = element_text(hjust = 0.5, vjust = 0, size=8),
         plot.subtitle = element_text(face = "bold", size = 11.5, hjust = 0.5),
-        legend.position = "bottom")
+        legend.position = "bottom")+
+theme_bw()+
+theme(legend.position = "", 
+      legend.title = element_blank(),
+      legend.text = element_text(size = 12),
+      panel.grid.minor = element_blank(),
+      panel.grid.major = element_blank(),
+      panel.background = element_rect(fill = "white", colour = "white"),
+      strip.background = element_blank(),  
+      strip.text = element_text(color = "black", size = 12),  
+      axis.text = element_text(size = 11),  
+      axis.title = element_text(size = 12, lineheight = 1.2))  
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+La gráfica muestra la evolución de la producción en la industria manufacturera entre los años 2015 y 2024, desglosada por tipo de destino: consumo humano, consumo animal y derivados de algas. A lo largo del periodo, el componente dominante ha sido consistentemente el consumo humano (color verde), con una participación que oscila entre el 75% y el 82%, lo que indica una fuerte orientación de la producción hacia este sector. El consumo animal (color azul) representa la segunda categoría en importancia, con porcentajes entre el 13% y el 19%, mostrando una participación relativamente estable. Finalmente, los derivados de algas (color naranja) tienen la menor representación, con un aporte que varía entre el 4% y el 6%, aunque se mantiene constante en los últimos años. En términos generales, la gráfica refleja una estructura de producción bastante estable, con ligeras variaciones anuales, y una clara prioridad hacia el abastecimiento de productos para el consumo humano. 
+
+```{r, fig.cap="Evolución de la producción en la industria manufacturera. 2005-2024", echo=FALSE}
+
+ggplot(produccion, aes(x = ANIO, y = Millones, label = Millones))+
+  geom_bar(aes(fill=CLASE), stat='identity', width = 0.7)+
+  geom_text(aes(y = Acum_II,label = paste0(Porcentaje,"%"), fontface = "bold"),
+            size=2.7)+
+  scale_y_continuous(limits = c(0, 3),
+                     breaks = seq(0, 3, 1),
+                     labels = scales::label_number(big.mark = ".",
+                                                   decimal.mark = ","))+
+  scale_fill_manual(values=c("#FE9C52", "#6AB1D6","#5CA159"))+
+  labs(subtitle= "Producción", x = "", y = "")+
+  theme_bw()+
+  theme(strip.background=element_rect(fill="white"),
+        strip.text=element_text(color="black", face="bold", size=12),
+        legend.title=element_blank(),
+        axis.text.x = element_text(hjust = 0.5, vjust = 0, size=8),
+        plot.subtitle = element_text(face = "bold", size = 11.5, hjust = 0.5),
+        legend.position = "bottom")+
+theme_bw()+
+theme(legend.position = "", 
+      legend.title = element_blank(),
+      legend.text = element_text(size = 12),
+      panel.grid.minor = element_blank(),
+      panel.grid.major = element_blank(),
+      panel.background = element_rect(fill = "white", colour = "white"),
+      strip.background = element_blank(),  
+      strip.text = element_text(color = "black", size = 12),  
+      axis.text = element_text(size = 11),  
+      axis.title = element_text(size = 12, lineheight = 1.2))  
+
+
+```

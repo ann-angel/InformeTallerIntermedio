@@ -6,7 +6,7 @@ El objetivo es demostrar el uso de **RMarkdown** como herramienta para generar u
 
 ---
 
-## 📦 Descripción del proyecto
+## Descripción del proyecto
 
 Se trabaja con un conjunto de datos que contiene **registros de producción y uso de materia prima** en el sector manufacturero chileno. A partir de esta información, se realiza un análisis exploratorio y se generan visualizaciones descriptivas para:
 
@@ -16,7 +16,7 @@ Se trabaja con un conjunto de datos que contiene **registros de producción y us
 
 ---
 
-## 🛠️ Herramientas utilizadas
+## Herramientas utilizadas
 
 - `R` (versión recomendada ≥ 4.0)
 - `RMarkdown`
@@ -24,10 +24,11 @@ Se trabaja con un conjunto de datos que contiene **registros de producción y us
   - `tidyverse`
   - `readr`
   - `ggplot2`
-  - `dplyr`
-  - `lubridate`
 
 ---
 
-## 📁 Estructura del repositorio
+## Estructura del repositorio
+
+- Datos: manufactura.chile.xlsx
+- Script: Informe.Rmd, Informe.html, README.md
 
