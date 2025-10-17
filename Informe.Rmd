@@ -7,24 +7,55 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+library(readxl)
+library(tidyverse)
+
+# cargar los datos
+mp <- read_excel("para.figuras.OE1.desem-manufactura.xlsx", 
+                 sheet = "mp_clase")
+
+produccion <- read_excel("para.figuras.OE1.desem-manufactura.xlsx", 
+                         sheet = "produccion_clase")
+
+# mp, filtrar por años, crear nuevas variables
+mp <- mp %>% filter(ANIO > 2018) %>% 
+  mutate(Millones = round((Toneladas/1000000),2),
+         Porcentaje = round((Porcentaje*100),0))
+
+# mp, asignar factores, orden
+mp$ANIO <- factor(mp$ANIO, 
+                      levels = c(2019, 2020, 2021, 2022, 2023, 2024))
+mp$CLASE <- factor(mp$CLASE, 
+                       levels = c("Derivados de algas", "Consumo animal", "Consumo humano"))
+
 ```
 
-## R Markdown
+## REPORTE INDUSTRIA MANUFACTURERA
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+Materia prima y producción.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+Entre 2020 y 2022, el uso de materia prima en la industria manufacturera aumentó un 13%, pero presentó una contracción en los últimos dos años. Por su parte, la producción total mostró una tendencia positiva, con un incremento del 16% en el periodo analizado. Al desagregar por subdivisión (Tabla 2), se observan diferencias relevantes. En consumo humano, la más significativa en términos de volumen, el uso de materia prima creció un 14% y la producción un 18%. En la subdivisión de consumo animal, que define la tendencia global, el uso de materia prima aumentó hasta 2022, pero luego disminuyó, cerrando 2024 con 1,27 millones de toneladas. Su producción siguió una evolución similar, cayendo desde un máximo 337 mil toneladas en 2022 a 296 mil toneladas en 2024. Por último, la subdivisión de derivados de algas se mantuvo estable a lo largo del periodo de análisis, con un promedio anual cercano a 386 mil toneladas de materia prima y 92 mil toneladas de producción.
 
-```{r cars}
-summary(cars)
-```
-
-## Including Plots
-
-You can also embed plots, for example:
 
 ```{r pressure, echo=FALSE}
-plot(pressure)
+ggplot(mp, aes(x = ANIO, y = Millones, label = Millones))+
+  geom_bar(aes(fill=CLASE), stat='identity', width = 0.7)+
+  geom_text(aes(y=Acum_II,label = paste0(Porcentaje,"%"), fontface = "bold"),
+            size=2.7)+
+  scale_y_continuous(limits = c(0, 5),
+                     breaks = seq(0, 5, 1),
+                     labels = scales::label_number(big.mark = ".",
+                                                   decimal.mark = ","))+
+  scale_fill_manual(values=c("#FE9C52", "#6AB1D6","#5CA159"))+
+  labs(subtitle= "Materia prima", x = "", y = "")+
+  theme_bw()+
+  theme(strip.background=element_rect(fill="white"),
+        strip.text=element_text(color="black", face="bold", size=12),
+        legend.title=element_blank(),
+        axis.text.x = element_text(hjust = 0.5, vjust = 0, size=8),
+        plot.subtitle = element_text(face = "bold", size = 11.5, hjust = 0.5),
+        legend.position = "bottom")
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
